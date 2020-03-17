@@ -69,11 +69,10 @@ python main.py
 你看到的内容应该如下：
 
 ```
-Add the values of the dice
-It's really that easy
-What are you doing with your life.
+就像生活中的那样，
+把这些骰子的点数加起来就行、
 
-Round 1
+回合 1
 
 ---------
 |*      |
@@ -100,25 +99,25 @@ Round 1
 |   *   |
 |*     *|
 ---------
-Sigh. What is your guess?: 
+那么，猜猜是多少？：
 ```
 
-Seems like the previous programmer had a sense of...humor? Nonetheless, let's enter 17 (since that is the total value of the dice).
+看上去之前的这位开发者有点幽默？既然如此，让我们输入17试试。
+
 
 ```
-Sigh. What is your guess?: 17
-Sorry that's wrong
-The answer is: 5
-Like seriously, how could you mess that up
-Wins: 0 Loses 1
-Would you like to play again?[Y/n]: 
+那么，猜猜是多少？：17
+噢！很抱歉
+答案是：5
+认真的吗。这你都能算错
+胜：0 负： 1
+还想接着玩吗？[Y（是）/N（否）] 
 ```
 
-Weird. It said the answer is 5 but that's clearly wrong... Alright, maybe the dice addition is wrong but let's play the game again to
-figure it out. Looks like the prompt to play again is `'Y'` so let's enter that now.
+奇怪了。居然说答案是5……好吧，可能是骰子的加法出了问题，让我们重新玩一次把他的问题找出来吧。看上去输入 `'Y'`就可以了，来试试看！
 
 ```
-Would you like to play again?[Y/n]: Y
+还想接着玩吗？[Y（是）/N（否）]: Y
 Traceback (most recent call last):
   File "main.py", line 12, in <module>
     main()
@@ -131,26 +130,22 @@ Traceback (most recent call last):
 dicegame.utils.UnnecessaryError: You actually called this function...
 ```
 
-Ok weird, there was an exception that was thrown even though we used what was supposed to be a valid input. I think it's safe to
-say that the program is broken so let's start the debugging process! 
+诡异，我们输入的明明是一个合法的回答，它居然抛出了异常。我可以认为这个程序是有问题的了。让我们开始 debugging 吧！
 
 
-## PDB 101: Intro to `pdb`
+## PDB 第一课： `pdb` 介绍
 
-It's time to finally work with python's very own debugger `pdb`. The debugger is included in python's standard library and we
-use it the same way we would with any python library. First, we have to import the `pdb` module and then call one of its methods
-to add a debugging breakpoint in the program. The conventional way to do this is to add the import **and** call the method at the same line you
-would like to stop at. This is the full statement you would want to include:
-
-```python
+是时候了解一下 python 自己的 debugger `pdb`了。他内嵌在 python 标准库中，使用时可以像其他库一样。首先，我们将库引入程序中，然后可以调用他的方法来在程序中添加一个断点。
+比较方便的测试方式是在 import 的同一行**加上**断点来停止程序。例如这样：
+```python3
 import pdb; pdb.set_trace()
 ```
 
-The method [`set_trace()`](https://docs.python.org/3/library/pdb.html#pdb.set_trace) hard codes a breakpoint at the line you place
-it the command. Let's try it now by opening up the `main.py` file and adding the breakpoint on line 8:
+方法[`set_trace()`](https://docs.python.org/3/library/pdb.html#pdb.set_trace) 通过硬编码的方式在调用行加入一个断点。
+让我试着打开 `main.py` 在第 8 行添加一个断点，代码如下：
 
 `file: main.py` 
-```python
+```python3
 from dicegame.runner import GameRunner
 
 
@@ -166,7 +161,7 @@ if __name__ == "__main__":
     main()
 ```
 
-Cool, now let's try to run `main.py` again and see what happens.
+酷，想在让我们开始再执行一次，看看会有什么效果。
 
 ```shell
 python main.py
@@ -180,30 +175,30 @@ What are you doing with your life.
 (Pdb) 
 ```
 
-There we go! We are now in the middle of the running program and we can start poking around. I think the first issue we should
-solve is the proper summation of the dice values.
+果然！我们现在停在了程序的某一步，并且可以前后翻找，对于刚刚的那个问题，我认为应该从累加的动作上入手。
 
-If you are familiar with Python's interpreter, a lot of that knowledge can be transferred to the `pdb` debugger. However, there will be
-a couple gotchas that we will get to in the advanced section. Regardless, let's learn a couple commands that will help us solve the
-addition issue.
+如果你对 Python 的解释器比较熟悉，那么有很多其相关的知识都可以被活用到 `pdb` debugger 上。然而，接下来还是会有很多诡异的地方。也不用担心，让我们现在先来学一些有帮助的命令。
 
 
-## The 5 `pdb` commands that will leave you "speechless"
-
+## 让你惊讶的 5 条 `pdb` 命令
 Taken directly from the `pdb` documentation, these are the five commands that, once you learn them, you won't know how you lived
 without them.
+直接从 `pdb` 的文档看，有 5 条命令，一旦你掌握了，将会成为你的得力助手。 
 
-1. `l(ist)` - Displays 11 lines around the current line or continue the previous listing.
-2. `s(tep)` - Execute the current line, stop at the first possible occasion.
-3. `n(ext)` - Continue execution until the next line in the current function is reached or it returns.
-4. `b(reak)` - Set a breakpoint (depending on the argument provided).
-5. `r(eturn)` - Continue execution until the current function returns.
+
+1. `l(ist)` - 显示本行的前后 11 行代码或者持续打印之前的代码
+2. `s(tep)` - 执行本行代码，并且停在合适的位置
+3. `n(ext)` - 一直执行下去直到当前方法结束或者返回
+4. `b(reak)` - 设置一个断点（取决于提供参数）
+5. `r(eturn)` - 一直执行下去直到当前方法返回
 
 Notice that there are brackets around the last part of every keyword. The brackets indicate that the rest of the word is _optional_ when
 using the command prompt for `pdb`. This saves typing but a major gotcha is if you have a variable name such as `l` or `n`, then the
 `pdb` command takes precedence. That is, say you have a variable named `c` in your program and you want to know the value of `c`. Well,
 if you type `c` in `pdb`, you will actually be issuing the `c(ontinue)` keyword which executes the program and only stops if it encounters
 a break point!
+注意那些关键字的括号内容。括号里文字表示关键字的剩余部分，在 `pdb` 中也是具有相同效用的表达方式。当然在精简了表达方式的同时，也会和你定义的变量冲突，比如 `l` 或者 `n`，
+这时候 `pdb` 命令会被视为优先。就好比说，你在程序里定义了一个变量名叫 `c`，如果想获得这个变量的值，
 
 **NB**: I, and many other programmers, discourage the use of short variable names such as `a`, `b`, `gme`, etc. These carry no meaning
 and will confuse other people reading your code. I'm only demonstrating the issues you may encounter with `pdb` in the presence of
